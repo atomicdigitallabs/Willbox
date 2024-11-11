@@ -6,7 +6,7 @@
     var xe = a => { var e = 0; for (var t in a) a.hasOwnProperty(t) && ++e; return e; };
     var T = a => !Array.isArray(a) || !a.length;
     var R = a => a instanceof Date && Object.prototype.toString.call(a) === "[object Date]" && !isNaN(a.getTime());
-    var Q = a => (a < 10 && (a = "0" + a), a);
+    var Q = a => (a < 10 ? "0" + a : a);
 
     var U = a => {
         if (R(a)) return a.toLocaleString("en-GB", { day: "numeric", month: "numeric", year: "numeric" });
@@ -92,7 +92,12 @@
                 if (t === "hire-start") {
                     var i = a.date, s = a.date.getTime(), r = new Date(s + 864e5 * 28), n = $("#hire-end"), d = n.datepicker("getDate");
                     n.datepicker("setStartDate", r);
-                    R(d) ? i >= new Date(d.getTime() - 864e5 * 28) ? (n.datepicker("setDate", r), n.datepicker("show")) : null : null;
+                    if (R(d)) {
+                        if (i >= new Date(d.getTime() - 864e5 * 28)) {
+                            n.datepicker("setDate", r);
+                            n.datepicker("show");
+                        }
+                    }
                 } else if (t === "hire-end") {
                     var l = $("#hire-start");
                     if (l.val() !== "") {
@@ -114,8 +119,6 @@
             }
         }
     });
-
-    // Additional configuration or functions here...
 
     $("#submit-enquiry").on("click", function (a) {
         var e = !0, t = $("#reason_for_enquiry").val();
