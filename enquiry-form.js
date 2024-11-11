@@ -1,9 +1,9 @@
 "use strict";
 (() => {
     var ze = Object.defineProperty;
-    var Ke = (a, e, t) => e in a ? ze(a, e, { enumerable: !0, configurable: !0, writable: !0, value: t }) : a[e] = t;
-    var _ = (a, e, t) => (Ke(a, typeof e != "symbol" ? e + "" : e, t), t);
-    var xe = a => { var e = 0; for (var t in a) a.hasOwnProperty(t) && ++e; return e; };
+    var Ke = (a, e, t) => (e in a ? ze(a, e, { enumerable: true, configurable: true, writable: true, value: t }) : a[e] = t);
+    var _ = (a, e, t) => (Ke(a, typeof e !== "symbol" ? e + "" : e, t), t);
+    var xe = a => { var e = 0; for (var t in a) if (a.hasOwnProperty(t)) ++e; return e; };
     var T = a => !Array.isArray(a) || !a.length;
     var R = a => a instanceof Date && Object.prototype.toString.call(a) === "[object Date]" && !isNaN(a.getTime());
     var Q = a => (a < 10 ? "0" + a : a);
@@ -15,7 +15,7 @@
     };
 
     var _e = (a, e, t) => (a.splice(t, 0, a.splice(e, 1)[0]), a);
-    var re = a => !!(a.prop("checked") === !0 || a.is(":checked"));
+    var re = a => !!(a.prop("checked") === true || a.is(":checked"));
     
     var V = a => {
         var e = JSON.parse(localStorage.getItem("enquiry"));
@@ -28,7 +28,7 @@
                         if (d === "billing" || d === "name" || d === "variant" || d === "qty") {
                             n[d] = r[d];
                         } else if (d === "selectedDates") {
-                            if (a === !0) {
+                            if (a === true) {
                                 var l = JSON.parse(localStorage.getItem("selectedDates"));
                                 if (!T(l)) {
                                     $.each(l, function (f, y) {
@@ -80,12 +80,11 @@
         return '<div class="datepicker-container"><div class="datepicker-title">' + a + '</div><div class="datepicker-panel" data-view="years picker"><ul><li data-view="years prev">&lsaquo;</li><li data-view="years current"></li><li data-view="years next">&rsaquo;</li></ul><ul data-view="years"></ul></div><div class="datepicker-panel" data-view="months picker"><ul><li data-view="year prev">&lsaquo;</li><li data-view="year current"></li><li data-view="year next">&rsaquo;</li></ul><ul data-view="months"></ul></div><div class="datepicker-panel" data-view="days picker"><ul><li data-view="month prev">&lsaquo;</li><li data-view="month current"></li><li data-view="month next">&rsaquo;</li></ul><ul data-view="week"></ul><ul data-view="days"></ul></div></div>';
     };
 
-    // Initialize Date Picker with defaults
     $.fn.datepicker.setDefaults({
         format: "dd-mm-yyyy",
         language: "en-GB",
-        autoHide: !0,
-        startDate: new Date,
+        autoHide: true,
+        startDate: new Date(),
         pick: function (a) {
             if (a.view === "day") {
                 var e = $(this), t = e.attr("id");
@@ -121,15 +120,22 @@
     });
 
     $("#submit-enquiry").on("click", function (a) {
-        var e = !0, t = $("#reason_for_enquiry").val();
+        var e = true, t = $("#reason_for_enquiry").val();
         if (t === "Container Conversions" || t === "Self Storage" || t === "General Enquiry") {
-            var i = [{ id: "email_address", message: "Please enter an email address" }, { id: "phone_number", message: "Please enter a phone number" }, { id: "last_name", message: "Please enter a last name" }, { id: "first_name", message: "Please enter a first name" }];
+            var i = [
+                { id: "email_address", message: "Please enter an email address" },
+                { id: "phone_number", message: "Please enter a phone number" },
+                { id: "last_name", message: "Please enter a last name" },
+                { id: "first_name", message: "Please enter a first name" }
+            ];
             $.each(i, function (g, p) {
-                $("#"+p.id).val() ? $("#"+p.id).siblings(".form-error").remove() : (e = !1, $("#"+p.id).siblings(".form-error").length || $('<div class="form-error">'+p.message+"</div>").insertAfter("#"+p.id), $("#"+p.id).trigger("focus"));
+                $("#" + p.id).val()
+                    ? $("#" + p.id).siblings(".form-error").remove()
+                    : (e = false, $("#" + p.id).siblings(".form-error").length || $('<div class="form-error">' + p.message + "</div>").insertAfter("#" + p.id), $("#" + p.id).trigger("focus"));
             });
         } else {
             // Additional form handling...
         }
-        return e ? (t = t.replace("/", " or "), $("#wf-form-enquiry").attr("data-name", t).attr("aria-label", t), $("#wf-form-enquiry").trigger("submit")) : !1;
+        return e ? ($("#wf-form-enquiry").attr("data-name", t).attr("aria-label", t), $("#wf-form-enquiry").trigger("submit")) : false;
     });
 })();
