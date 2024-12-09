@@ -144,25 +144,44 @@
 })();
 
 
-`;for(var d=0;d<n[c].length;d++)h.value+=n[c][d],d<n[c].length-1&&(h.value+=`
-
-`)}document.getElementById("wf-form-enquiry").append(h)}if(T(n.purchase)===!1){let h=document.createElement("textarea");h.name="Purchase items",h.hidden=!0;for(var c in n)if(c==="purchase"&&T(n[c])===!1){h.value+=`Purchase items:
-
-`;for(var d=0;d<n[c].length;d++)h.value+=n[c][d],d<n[c].length-1&&(h.value+=`
-
-`)}document.getElementById("wf-form-enquiry").addEventListener("submit", function(e) {
+document.getElementById("wf-form-enquiry").addEventListener("submit", function(e) {
     e.preventDefault();
     const reason = document.getElementById("reason_for_enquiry").value;
 
+    // Configura el formulario según el motivo de la consulta
     if (reason === "New Hire") {
         setupNewHireForm();
     } else if (reason === "Sales Quote") {
         setupSalesQuoteForm();
     }
 
-    // Proceso general para enviar el formulario después de configurar
+    // Proceso general para enviar el formulario después de configurarlo
     document.getElementById("wf-form-enquiry").submit();
 });
+
+// Agregar elementos dinámicos al formulario
+function addHiddenFields(n) {
+    if (!n.purchase) {
+        let h = document.createElement("textarea");
+        h.name = "Purchase items";
+        h.hidden = true;
+        h.value = "Purchase items:\n";
+
+        for (let c in n) {
+            if (c === "purchase" && Array.isArray(n[c])) {
+                for (let d = 0; d < n[c].length; d++) {
+                    h.value += n[c][d];
+                    if (d < n[c].length - 1) {
+                        h.value += "\n"; // Salto de línea entre elementos
+                    }
+                }
+            }
+        }
+
+        document.getElementById("wf-form-enquiry").append(h);
+    }
+}
+
 
 function setupNewHireForm() {
     Se("/complete-your-enquiry/hire-thank-you"); // Redirige a la página de gracias para "New Hire"
